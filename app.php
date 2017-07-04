@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/bin/env php7.1
 
 <?php
 class Hash
@@ -299,9 +299,10 @@ class Hash
         if ($salt{$offset + 2} > '$') {
             throw new Exception("Missing salt rounds");
         }
-        $r1 = intval(substr($salt, $offset, $offset + 1)) * 10;
-        $r2 = intval(substr($salt, $offset + 1, $offset + 2));
-        echo $r1, $r2;
+        //print substr($salt, $offset, 1)."\n";
+        $r1 = intval(substr($salt, $offset, 1)) * 10;
+        $r2 = intval(substr($salt, $offset + 1, 1));
+        echo $r1.':'. $r2;
         $this->rounds = $r1 + $r2;
         $real_salt = substr($salt, $offset + 3, $offset + 25);
         $s .= ($this->minor >= 'a') ? "\x00" : "";
@@ -409,7 +410,10 @@ class Hash
 
         $l ^= $P[0];
         //The following is an unrolled version of the above loop.
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -420,7 +424,10 @@ class Hash
         $n += $S[0x300 | ($r & 0xff)];
         $l ^= $n ^ $P[2];
         //Iteration 1
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -431,7 +438,10 @@ class Hash
         $n += $S[0x300 | ($r & 0xff)];
         $l ^= $n ^ $P[4];
         //Ite$ratio$n 2
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -442,7 +452,10 @@ class Hash
         $n += $S[0x300 | ($r & 0xff)];
         $l ^= $n ^ $P[6];
         //Ite$ratio$n 3
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -453,7 +466,10 @@ class Hash
         $n += $S[0x300 | ($r & 0xff)];
         $l ^= $n ^ $P[8];
         //Ite$ratio$n 4
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -464,7 +480,10 @@ class Hash
         $n += $S[0x300 | ($r & 0xff)];
         $l ^= $n ^ $P[10];
         //Ite$ratio$n 5
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -475,7 +494,10 @@ class Hash
         $n += $S[0x300 | ($r & 0xff)];
         $l ^= $n ^ $P[12];
         //Ite$ratio$n 6
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -486,7 +508,10 @@ class Hash
         $n += $S[0x300 | ($r & 0xff)];
         $l ^= $n ^ $P[14];
         //Ite$ratio$n 7
-        $n  = $S[$l >> 24];
+        if (isset($S[$l >> 24]))
+            $n  = $S[$l >> 24];
+        else
+            $n = $S[0];
         $n += $S[0x100 | (($l >> 16) & 0xff)];
         $n ^= $S[0x200 | (($l >> 8) & 0xff)];
         $n += $S[0x300 | ($l & 0xff)];
@@ -545,7 +570,6 @@ class Hash
             $S[$i] = $lr[0];
             $S[$i + 1] = $lr[1];
         }
-
     }
 
     /**
@@ -595,14 +619,12 @@ class Hash
 
     }
 
-
-
 }
 
 
 
-$hash = new Hash();
+//$hash = new Hash();
 $pass = '123456';
-print $hash->getHash($pass);
-
+//print $hash->getHash($pass);
+echo password_hash($pass, PASSWORD_DEFAULT)."\n";
 
