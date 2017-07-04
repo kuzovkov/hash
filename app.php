@@ -626,5 +626,6 @@ class Hash
 //$hash = new Hash();
 $pass = '123456';
 //print $hash->getHash($pass);
+//https://stackoverflow.com/questions/4795385/how-do-you-use-bcrypt-for-hashing-passwords-in-php
 echo password_hash($pass, PASSWORD_DEFAULT)."\n";
 
